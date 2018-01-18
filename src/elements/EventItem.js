@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-const EventItem = () => {
+const EventItem = (props) => {
   const styles = StyleSheet.create({
     container: {
       width: '48%',
@@ -28,9 +28,9 @@ const EventItem = () => {
   return (
     <View style={styles.container} >
       <View style={styles.info} >
-        <Text style={styles.artist}>04 Limited Sazabys</Text>
-        <Text style={styles.date}>2018/01/13 (土) 18:00</Text>
-        <Text style={styles.venue}>@Zepp Osaka Bayside(大阪府)</Text>
+        <Text style={styles.artist}>{props.event.artistName}</Text>
+        <Text style={styles.date}>{props.event.date}</Text>
+        <Text style={styles.venue}>{props.event.venueName}</Text>
       </View>
     </View>
   );

@@ -1,32 +1,22 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native';
 
 import EventItem from '../elements/EventItem';
 
-const container = () => {
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'center',
-    },
-  });
-
+const EventList = (props) => {
   return (
-    <View style={styles.container} >
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-      <EventItem />
-    </View>
+    <FlatList
+      data={props.events}
+      numColumns={2}
+      columnWrapperStyle={{
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+      }}
+      renderItem={({ item }) => <EventItem event={item} />}
+    />
   );
 };
 
-export default container;
+export default EventList;
