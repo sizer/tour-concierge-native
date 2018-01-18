@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#eee',
-    width: '20%',
+    width: '10%',
     height: 40,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -45,6 +45,8 @@ const styles = StyleSheet.create({
 class EventListScreen extends React.Component {
   state = {
     eventList: [],
+    distance: 5,
+    from: 2,
   }
 
   componentWillMount() {
@@ -52,7 +54,7 @@ class EventListScreen extends React.Component {
   }
 
   fetchEvents() {
-    fetch(`${ENV.API_HOST}/api/events/nearby?q%5Blat%5D=35.625952&q%5Blong%5D=139.782309`)
+    fetch(`${ENV.API_HOST}/api/events/nearby?q[lat]=35.625952&q[long]=139.782309&q[distance]=${this.state.distance || 5}&q[from]=${this.state.from || 2}`)
       .then((response) => {
         return response.json();
       })
@@ -62,7 +64,7 @@ class EventListScreen extends React.Component {
             key: event.id,
             artistName: event.player.name,
             date: moment.unix(event.start_at).format('YYYY/MM/DD HH:mm'),
-            venueName: '',
+            venueName: event.address.name,
             url: event.url,
           };
         });
@@ -85,8 +87,25 @@ class EventListScreen extends React.Component {
         <View style={styles.inputField} >
           <TextInput
             style={styles.input}
-            value="Distance"
+            value={this.state.distance}
+            onChangeText={(text) => { this.setState({ distance: text }); }}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder="Distance"
+            underlineColorAndroid="transparent"
           />
+          <Text>km</Text>
+          <TextInput
+            style={styles.input}
+            value={this.state.from}
+            onChangeText={(text) => { this.setState({ from: text }); }}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder="days from"
+            underlineColorAndroid="transparent"
+          />
+          <Text>days from now</Text>
+
           <View style={styles.buttonContainer} >
             <CircleButton
               iconName="refresh"
