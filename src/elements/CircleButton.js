@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View, TouchableHighlight } from 'react-native';
 
-const CircleButton = () => {
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const CircleButton = (props) => {
   const styles = StyleSheet.create({
     container: {
       backgroundColor: '#B3057E',
@@ -14,18 +16,17 @@ const CircleButton = () => {
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
     },
-    title: {
-      color: '#fff',
-      fontSize: 24,
-    },
   });
 
   return (
-    <View style={styles.container} >
-      <Text style={styles.title}>
-        +
-      </Text>
-    </View>
+    <TouchableHighlight
+      onPress={props.onPress}
+      underlayColor="transparent"
+    >
+      <View style={styles.container} >
+        <Icon name={props.iconName ? props.iconName : ''} size={24} color="#fff" />
+      </View>
+    </TouchableHighlight>
   );
 };
 

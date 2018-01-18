@@ -48,6 +48,10 @@ class EventListScreen extends React.Component {
   }
 
   componentWillMount() {
+    this.fetchEvents();
+  }
+
+  fetchEvents() {
     fetch(`${ENV.API_HOST}/api/events/nearby?q%5Blat%5D=35.625952&q%5Blong%5D=139.782309`)
       .then((response) => {
         return response.json();
@@ -84,7 +88,10 @@ class EventListScreen extends React.Component {
             value="Distance"
           />
           <View style={styles.buttonContainer} >
-            <CircleButton />
+            <CircleButton
+              iconName="refresh"
+              onPress={() => { this.fetchEvents(); }}
+            />
           </View>
         </View>
 
