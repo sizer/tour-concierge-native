@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Linking } from 'react-native';
 
 const EventItem = (props) => {
   const styles = StyleSheet.create({
@@ -26,13 +26,16 @@ const EventItem = (props) => {
   });
 
   return (
-    <View style={styles.container} >
+    <TouchableHighlight
+      style={styles.container}
+      onPress={() => { Linking.openURL(props.event.url); }}
+    >
       <View style={styles.info} >
         <Text style={styles.artist}>{props.event.artistName}</Text>
         <Text style={styles.date}>{props.event.date}</Text>
         <Text style={styles.venue}>{props.event.venueName}</Text>
       </View>
-    </View>
+    </TouchableHighlight>
   );
 };
 

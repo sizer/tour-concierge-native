@@ -14,7 +14,7 @@ const EventList = (props) => {
         flexWrap: 'wrap',
         justifyContent: 'center',
       }}
-      renderItem={({ item }) => <EventItem event={item} />}
+      renderItem={({ item }) => <EventItem key={item.key} event={item} />}
     />
   );
 };

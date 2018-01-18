@@ -55,9 +55,11 @@ class EventListScreen extends React.Component {
       .then((responseJson) => {
         return responseJson.events.map((event) => {
           return {
+            key: event.id,
             artistName: event.player.name,
             date: moment.unix(event.start_at).format('YYYY/MM/DD HH:mm'),
             venueName: '',
+            url: event.url,
           };
         });
       })
