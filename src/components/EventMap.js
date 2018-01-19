@@ -1,6 +1,6 @@
 import { MapView } from 'expo';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 const EventMap = (props) => {
   const styles = StyleSheet.create({
@@ -19,8 +19,8 @@ const EventMap = (props) => {
     longitude: props.location.data ? props.location.data.coords.longitude : 139.767052,
   };
 
-  return (
-    <View style={styles.container} >
+  const renderMap = () => {
+    return (
       <MapView
         style={styles.mapView}
         initialRegion={{
@@ -33,10 +33,24 @@ const EventMap = (props) => {
         <MapView.Circle
           center={latlng}
           radius={props.distance * 1000}
-          strokeColor="rgba(70, 2, 49, 0.5)"
-          fillColor="rgba(70, 2, 49, 0.5)"
+          strokeColor="rgba(70, 2, 49, 0.1)"
+          fillColor="rgba(70, 2, 49, 0.1)"
         />
       </MapView>
+    );
+  };
+
+  const renderNothing = () => {
+    return (
+      <View>
+        <Text>can not get location data from devise. please allow it.</Text>
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container} >
+      { props.location.allowed ? renderMap() : renderNothing() }
     </View>
   );
 };

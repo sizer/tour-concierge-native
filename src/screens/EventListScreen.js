@@ -53,11 +53,11 @@ class EventListScreen extends React.Component {
 
   componentWillMount() {
     this.fetchLocation();
-    this.fetchEvents();
   }
 
   fetchLocation() {
     if (Platform.OS === 'android' && !Constants.isDevice) {
+      console.log("if (Platform.OS === 'android' && !Constants.isDevice)");
       this.setState({
         location: {
           allowed: false,
@@ -67,6 +67,8 @@ class EventListScreen extends React.Component {
     } else {
       Permissions.askAsync(Permissions.LOCATION)
         .then((status) => {
+          console.log('Permissions.askAsync(Permissions.LOCATION)');
+          console.log(status);
           if (status !== 'granted') {
             this.setState({
               location: {
@@ -78,38 +80,52 @@ class EventListScreen extends React.Component {
           return Location.getCurrentPositionAsync({});
         })
         .then((location) => {
+          console.log(location);
           this.setState({
             location: {
               allowed: true,
               data: location,
             },
           });
+          this.fetchEvents();
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }
   }
 
   fetchEvents() {
-    fetch(`${ENV.API_HOST}/api/events/nearby?q[lat]=35.681167&q[long]=139.767052&q[distance]=${this.state.inputs.distance || 5}&q[from]=${this.state.inputs.from || 2}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((responseJson) => {
-        return responseJson.events.map((event) => {
-          return {
-            key: event.id,
-            artistName: event.player.name,
-            date: moment.unix(event.start_at).format('YYYY/MM/DD HH:mm'),
-            venueName: event.address.name,
-            url: event.url,
-          };
+    console.log('fetchEvents()');
+    console.log(this.state);
+    if (this.state.location.allowed) {
+      fetch(`${ENV.API_HOST}/api/events/nearby?q[lat]=${this.state.location.data.coords.latitude}&q[long]=${this.state.location.data.coords.longitude}&q[distance]=${this.state.inputs.distance || 5}&q[from]=${this.state.inputs.from || 2}`)
+        .then((response) => {
+          console.log(`${ENV.API_HOST}/api/events/nearby?q[lat]=35.681167&q[long]=139.767052&q[distance]=${this.state.inputs.distance || 5}&q[from]=${this.state.inputs.from || 2}`);
+          console.log(response);
+          return response.json();
+        })
+        .then((responseJson) => {
+          return responseJson.events.map((event) => {
+            return {
+              key: event.id,
+              artistName: event.player.name,
+              date: moment.unix(event.start_at).format('YYYY/MM/DD HH:mm'),
+              venueName: event.address.name,
+              url: event.url,
+            };
+          });
+        })
+        .then((eventList) => {
+          console.log(eventList);
+          this.setState({ eventList });
+        })
+        .catch((error) => {
+          console.error(error);
         });
-      })
-      .then((eventList) => {
-        this.setState({ eventList });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    } else {
+      this.setState({ eventList: [] });
+    }
   }
 
   render() {
@@ -145,7 +161,7 @@ class EventListScreen extends React.Component {
           <View style={styles.buttonContainer} >
             <CircleButton
               iconName="refresh"
-              onPress={() => { this.fetchEvents(); }}
+              onPress={() => { this.fetchLocation(); }}
             />
           </View>
         </View>
