@@ -42,7 +42,7 @@ class EventListScreen extends React.Component {
   state = {
     eventList: [],
     inputs: {
-      distance: 5,
+      distance: 2,
       from: 2,
     },
     location: {
@@ -112,7 +112,12 @@ class EventListScreen extends React.Component {
               artistName: event.player.name,
               date: moment.unix(event.start_at).format('YYYY/MM/DD HH:mm'),
               venueName: event.address.name,
+              title: event.title,
               url: event.url,
+              latlng: {
+                latitude: event.address.latitude,
+                longitude: event.address.longitude,
+              }
             };
           });
         })
@@ -134,6 +139,7 @@ class EventListScreen extends React.Component {
         <EventMap
           location={this.state.location}
           distance={this.state.inputs.distance}
+          events={this.state.eventList}
         />
 
         <View style={styles.inputField} >

@@ -19,6 +19,17 @@ const EventMap = (props) => {
     longitude: props.location.data ? props.location.data.coords.longitude : 139.767052,
   };
 
+  const renderEventMarkers = () => {
+    return props.events.map((event) => {
+      return (
+        <MapView.Marker
+          coordinate={event.latlng}
+          title={`${event.venueName}\n${event.title}`}
+        />
+      );
+    });
+  };
+
   const renderMap = () => {
     return (
       <MapView
@@ -29,13 +40,17 @@ const EventMap = (props) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        showsUserLocation
+        followsUserLocation
+        showsScale
       >
         <MapView.Circle
           center={latlng}
-          radius={props.distance * 1000}
+          radius={(props.distance) * 1000}
           strokeColor="rgba(70, 2, 49, 0.1)"
           fillColor="rgba(70, 2, 49, 0.1)"
         />
+        { renderEventMarkers() }
       </MapView>
     );
   };
