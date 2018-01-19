@@ -1,10 +1,11 @@
+import { Constants, Location, Permissions } from 'expo';
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import moment from 'moment';
 
 import CircleButton from '../elements/CircleButton';
 import EventList from '../components/EventList';
-
+import EventMap from '../components/EventMap';
 
 import ENV from '../../env.json';
 
@@ -12,11 +13,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: '100%',
-  },
-  eventmap: {
-    width: '100%',
-    height: 300,
-    backgroundColor: '#B3057E',
   },
   inputField: {
     width: '100%',
@@ -45,16 +41,55 @@ const styles = StyleSheet.create({
 class EventListScreen extends React.Component {
   state = {
     eventList: [],
-    distance: 5,
-    from: 2,
+    inputs: {
+      distance: 5,
+      from: 2,
+    },
+    location: {
+      allowed: false,
+      data: null,
+    },
   }
 
   componentWillMount() {
+    this.fetchLocation();
     this.fetchEvents();
   }
 
+  fetchLocation() {
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        location: {
+          allowed: false,
+          data: null,
+        },
+      });
+    } else {
+      Permissions.askAsync(Permissions.LOCATION)
+        .then((status) => {
+          if (status !== 'granted') {
+            this.setState({
+              location: {
+                allowed: false,
+                data: null,
+              },
+            });
+          }
+          return Location.getCurrentPositionAsync({});
+        })
+        .then((location) => {
+          this.setState({
+            location: {
+              allowed: true,
+              data: location,
+            },
+          });
+        });
+    }
+  }
+
   fetchEvents() {
-    fetch(`${ENV.API_HOST}/api/events/nearby?q[lat]=35.625952&q[long]=139.782309&q[distance]=${this.state.distance || 5}&q[from]=${this.state.from || 2}`)
+    fetch(`${ENV.API_HOST}/api/events/nearby?q[lat]=35.681167&q[long]=139.767052&q[distance]=${this.state.inputs.distance || 5}&q[from]=${this.state.inputs.from || 2}`)
       .then((response) => {
         return response.json();
       })
@@ -80,15 +115,16 @@ class EventListScreen extends React.Component {
   render() {
     return (
       <View style={styles.container} >
-        <View style={styles.eventmap} >
-          <Text>Map</Text>
-        </View>
+        <EventMap
+          location={this.state.location}
+          distance={this.state.inputs.distance}
+        />
 
         <View style={styles.inputField} >
           <TextInput
             style={styles.input}
-            value={this.state.distance}
-            onChangeText={(text) => { this.setState({ distance: text }); }}
+            value={this.state.inputs.distance}
+            onChangeText={(text) => { this.setState({ inputs: { distance: text } }); }}
             autoCapitalize="none"
             autoCorrect={false}
             placeholder="Distance"
@@ -97,8 +133,8 @@ class EventListScreen extends React.Component {
           <Text>km</Text>
           <TextInput
             style={styles.input}
-            value={this.state.from}
-            onChangeText={(text) => { this.setState({ from: text }); }}
+            value={this.state.inputs.from}
+            onChangeText={(text) => { this.setState({ inputs: { from: text } }); }}
             autoCapitalize="none"
             autoCorrect={false}
             placeholder="days from"
